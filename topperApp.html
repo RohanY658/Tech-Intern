@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Topper Finder App</title>
+</head>
+<body>
+  <div id="results"></div>
+  <script>
+    const students = [
+      { name: "Aarav", marks: 85 },
+      { name: "Priya", marks: 72 },
+      { name: "Vikram", marks: 90 },
+      { name: "Sneha", marks: 55 },
+      { name: "Rohan", marks: 40 }
+    ];
+
+    function Average(students) {
+      const total = students.reduce((sum, student) => sum + student.marks, 0);
+      return (total / students.length);
+    }
+
+    function Topper(students) {
+      return students.reduce((topper, student) => student.marks > topper.marks ? student : topper, students[0]);
+    }
+
+    function PassFail(students, passMark = 50) {
+      let pass = 0, fail = 0;
+      students.forEach(student => {
+        if (student.marks >= passMark) pass++;
+        else fail++;
+      });
+      return { pass, fail };
+    }
+
+    const average = Average(students);
+    const topper = Topper(students);
+    const { pass, fail } = PassFail(students);
+
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = `
+      <h1><center>Topper Finder App<center></h1>
+
+      <p>Average Marks: ${average}</p>
+      <p>Highest Scorer: ${topper.name} (${topper.marks} marks)</p>
+      <p>Number of Pass Students: ${pass}</p>
+      <p>Number of Fail Students: ${fail}</p>
+    `;
+  </script>
+</body>
+</html>
