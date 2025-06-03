@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Marksheet Tool</title>
+</head>
+<body>
+  <h1>Student Marksheet Tool</h1>
+  <form id="studentForm" autocomplete="off">
+    <label>
+      Name:
+      <input type="text" id="nameInput" required>
+    </label>
+    <label>
+      Marks:
+      <input type="number" id="marksInput" min="0" max="100" required>
+    </label>
+    <button type="submit">Add Student</button>
+  </form>
+
+  <h3>All Students</h3>
+  <table border="1" id="studentsTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Marks</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Student rows will appear here -->
+    </tbody>
+  </table>
+
+  <div id="stats">
+    <p><strong>Average Marks:</strong> <span id="averageMarks">0</span></p>
+    <p><strong>Topper:</strong> <span id="topperName">-</span></p>
+    <p><strong>Pass Rate:</strong> <span id="passRate">0%</span></p>
+  </div>
+
+  <script>
+    const students = [];
+
+    const form = document.getElementById('studentForm');
+    const nameInput = document.getElementById('nameInput');
+    const marksInput = document.getElementById('marksInput');
+    const studentsTableBody = document.getElementById('studentsTable').querySelector('tbody');
+    const averageMarksSpan = document.getElementById('averageMarks');
+    const topperNameSpan = document.getElementById('topperName');
+    const passRateSpan = document.getElementById('passRate');
+
+    function updateTable() {
+      studentsTableBody.innerHTML = '';
+      students.forEach((student, idx) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${student.name}</td>
+          <td>${student.marks}</td>
+        `;
+        studentsTableBody.appendChild(row);
+      });
+    }
+
+    function updateStats() {
+      if (students.length === 0) {
+        averageMarksSpan.textContent = '0';
+        topperNameSpan.textContent = '-';
+        passRateSpan.textContent = '0%';
+        return;
+      }
+      const total = students.reduce((sum, s) => sum + s.marks, 0);
+      const average = (total / students.length).toFixed(2);
+      averageMarksSpan.textContent = average;
+
+      let topper = students[0];
+      students.forEach(s => { if (s.marks > topper.marks) topper = s; });
+      topperNameSpan.textContent = `${topper.name} (${topper.marks})`;
+
+      const passCount = students.filter(s => s.marks >= 50).length;
+      const passRate = ((passCount / students.length) * 100).toFixed(1);
+      passRateSpan.textContent = `${passRate}%`;
+    }
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const name = nameInput.value.trim();
+      const marks = parseInt(marksInput.value, 10);
+
+      if (!name || isNaN(marks) || marks < 0 || marks > 100) {
+        alert('Please enter a valid name and marks (0-100).');
+        return;
+      }
+
+      students.push({ name, marks });
+      nameInput.value = '';
+      marksInput.value = '';
+      updateTable();
+      updateStats();
+    });
+
+    // Initial display
+    updateTable();
+    updateStats();
+  </script>
+</body>
+</html>
